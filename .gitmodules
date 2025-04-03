@@ -1,0 +1,3 @@
+[submodule "resources/repos/mcp-specification"]
+	path = resources/repos/mcp-specification
+	url = https://github.com/modelcontextprotocol/specification.git
