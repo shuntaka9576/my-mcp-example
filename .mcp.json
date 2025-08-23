@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mymcp": {
+      "command": "/Users/shuntaka/.local/share/mise/installs/node/24.6.0/bin/node",
+      "args": ["--experimental-transform-types", "/Users/shuntaka/repos/github.com/shuntaka9576/my-mcp-example/src/index.mts"]
+    }
+  }
+}
