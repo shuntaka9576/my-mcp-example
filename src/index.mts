@@ -75,6 +75,60 @@ server.addPrompt({
 	},
 });
 
+// プロジェクト設定の配列
+const projects = [
+	{
+		name: "blocc",
+		path: "/Users/shuntaka/repos/github.com/shuntaka9576/blocc",
+		description: "BLOCC プロジェクト",
+	},
+];
+
+// プロジェクトファイル登録の初期化処理
+const initializeProjectResources = async () => {
+	const { exec } = await import("node:child_process");
+	const { promisify } = await import("node:util");
+	const execAsync = promisify(exec);
+
+	for (const project of projects) {
+		try {
+			const { stdout } = await execAsync("rg --files", { cwd: project.path });
+			const files = stdout
+				.trim()
+				.split("\n")
+				.filter((line) => line);
+
+			// 各ファイルを個別のリソースとして登録
+			for (const file of files) {
+				const filePath = path.join(project.path, file);
+				server.addResource({
+					uri: `file:///resources/repos/${project.name}/${file}`,
+					name: `${project.name}:${file}`,
+					description: `${project.description}: ${file}`,
+					mimeType: "text/plain",
+					async load() {
+						try {
+							const content = await fs.promises.readFile(filePath, "utf8");
+							return {
+								text: content,
+							};
+						} catch (error) {
+							return {
+								text: `Error reading file: ${error}`,
+							};
+						}
+					},
+				});
+			}
+		} catch (error) {
+			console.error(`Error initializing resources for ${project.name}:`, error);
+		}
+	}
+};
+
+// リソースを初期化
+initializeProjectResources();
+
 server.addPrompt({
 	name: "translate-to-japanese",
 	description: "英語のテキストを日本語に翻訳します",
